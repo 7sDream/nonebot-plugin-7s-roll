@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "nonebot-plugin-7s-roll"
+version = "0.1.0"
+description = "A roll dice plugin for nonebot"
+authors = ["7sDream <i@7sdre.am>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/7sDream/nonebot_plugin_i7s_roll"
+repository = "https://github.com/7sDream/nonebot_plugin_i7s_roll"
+keywords = ["nonebot", "dice", "roll", "trpg"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Plugins",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+include = [
+    "LICENSE",
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+nonebot2 = {version = "^2.0.0-alpha.10", allow-prereleases = true}
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+pylint = "^2.6.0"
+black = "^20.8b1"
+rope = "^0.18.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
