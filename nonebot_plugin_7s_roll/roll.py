@@ -75,20 +75,3 @@ def roll(expr_str: str, op_str: str = None, target_str: str = None) -> [str]:
         messages.append("".join(message))
 
     return messages
-
-
-def _repl():
-    regex = re.compile(r"^([0-9adgimnsuvx+\- ]+)( ?(>=|>|<|<=) ?(-?\d{1,10}))?$")
-    while True:
-        match = regex.match(input().strip())
-        if match:
-            expr_str, op_str, target = match.group(1, 3, 4)
-            messages = roll(expr_str, op_str, target)
-            print("\n".join(messages))
-            print()
-        else:
-            print("invalid input")
-
-
-if __name__ == "__main__":
-    _repl()

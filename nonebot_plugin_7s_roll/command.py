@@ -51,7 +51,7 @@ async def roll_command_handler(bot: Bot, event: Event, state: dict):
 
 
 cmd_roll = on_command(CONF.i7s_roll_command, priority=1, block=True)
-cmd_roll.handle()(roll)
+cmd_roll.handle()(roll_command_handler)
 
 message_cmd_roll = on_message(rule=regex(RE_ROLL_STR), priority=2, block=True)
-message_cmd_roll.handle()(roll)
+message_cmd_roll.handle()(roll_command_handler)
