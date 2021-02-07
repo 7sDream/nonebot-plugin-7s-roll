@@ -15,7 +15,7 @@ nonebot.load_builtin_plugins()
 
 # load other plugins
 
-nonebot.load_plugin("nonebot_plugin_i7s_roll")
+nonebot.load_plugin("nonebot_plugin_7s_roll")
 
 nonebot.run()
 ```
