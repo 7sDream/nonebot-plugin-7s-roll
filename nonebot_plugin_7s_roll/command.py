@@ -3,6 +3,7 @@ import re
 from nonebot import on_message, on_command
 from nonebot.adapters import Bot, Event
 from nonebot.adapters.cqhttp.permission import GROUP
+from nonebot.adapters.cqhttp.message import Message
 from nonebot.rule import regex
 
 from .common import START, SEP, CONF
@@ -39,7 +40,7 @@ async def roll_command_handler(bot: Bot, event: Event, state: dict):
             messages.append("表达式举例：3d6+1d3-1")
             messages.append("判断方式可选：>, <, <=, >=, 或对应中文")
             messages.append("目标：需要达成的点数")
-            return await cmd_roll.finish("\n".join(messages))
+            return await cmd_roll.finish(Message("\n".join(messages)))
         if match.group(1) is None:
             return
 
@@ -47,7 +48,7 @@ async def roll_command_handler(bot: Bot, event: Event, state: dict):
 
     messages.extend(roll(expr_str, op_str, target))
 
-    return await cmd_roll.finish("\n".join(messages))
+    return await cmd_roll.finish(Message("\n".join(messages)))
 
 
 cmd_roll = on_command(CONF.i7s_roll_command, priority=1, block=True)
