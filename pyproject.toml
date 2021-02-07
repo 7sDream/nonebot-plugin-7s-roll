@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot-plugin-7s-roll"
-version = "0.1.0"
+version = "0.1.1"
 description = "A roll dice plugin for nonebot"
 authors = ["7sDream <i@7sdre.am>"]
 license = "MIT"
