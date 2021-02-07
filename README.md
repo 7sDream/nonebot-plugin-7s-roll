@@ -35,10 +35,12 @@ I7S_ROLL_TRIGGER="roll"
 
 其中：
 
-- `expr` 计算表达式，格式为
-  - `<dice>[[ ][+|-][ ]<dice>] ...`，其中 `dice` 的格式为：
-    - `<number>[d|D]<number>[ ][<policy>]`
-      - 其中 `policy` 为多个骰子的投掷方式，默认为 `sum`，可选方式有：
+- `<expr>` 计算表达式，格式为
+  - `<roll>[[ ][+|-][ ]<roll>]...`，其中 `roll` 不超过 20 项，其格式为：
+    - `<times>[d|D]<faces>[ ][<policy>]`，其中
+      - `<times>` 为投掷次数，不超过 20 次
+      - `<faces>` 为骰子面数，不超过 1000 面
+      - `<policy>` 为投掷方式，默认为 `sum`，可选方式有：
         - `sum` 求和
         - `min` 取最小值
         - `max` 取最大值
@@ -48,11 +50,11 @@ I7S_ROLL_TRIGGER="roll"
   - `<`、`小于`
   - `>=`、`大于等于`
   - `<=`、`小于等于`
-- `target` 为最终目标，为一数字
+- `target` 为期望目标
 
 ## 举例
 
-`roll 3d6`:
+`roll 3d6`（在只有一个 `roll` 时，会显示的比较详细）:
 
 ```text
 3d6 投掷结果

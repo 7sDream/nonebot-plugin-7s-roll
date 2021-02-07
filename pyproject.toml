@@ -5,8 +5,8 @@ description = "A roll dice plugin for nonebot"
 authors = ["7sDream <i@7sdre.am>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/7sDream/nonebot_plugin_i7s_roll"
-repository = "https://github.com/7sDream/nonebot_plugin_i7s_roll"
+homepage = "https://github.com/7sDream/nonebot_plugin_7s_roll"
+repository = "https://github.com/7sDream/nonebot_plugin_7s_roll"
 keywords = ["nonebot", "dice", "roll", "trpg"]
 classifiers = [
     "Development Status :: 3 - Alpha",
