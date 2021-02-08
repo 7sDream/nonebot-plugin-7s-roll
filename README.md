@@ -80,6 +80,12 @@ I7S_ROLL_TRIGGER="roll"
 (max[35, 60, 29] = 60) + (1 + 1 + 5 + 8) = 75
 ```
 
+## 截图
+
+![screenshot-dice]
+
 ## LICENSE
 
 MIT.
+
+[screenshot-dice]: https://rikka.7sdre.am/files/8c6c5b15-0343-4d14-a203-422c7d6c634e.png
