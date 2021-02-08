@@ -2,6 +2,7 @@ import re
 
 from nonebot import on_message, on_command
 from nonebot.adapters import Bot, Event
+from nonebot.log import logger
 from nonebot.adapters.cqhttp.permission import GROUP
 from nonebot.adapters.cqhttp.message import Message
 from nonebot.rule import regex
@@ -16,7 +17,7 @@ RE_ROLL_STR = (
     + " |"
     + CONF.i7s_roll_trigger
     #      2                     3  4      5                                    6
-    + r" )?([0-9adgimnsuvx+\- ]+)( ?(结果)?(大于|小于|大于等于|小于等于|>=|>|<|<=) ?(-?\d{1,10}))?"
+    + r" )([0-9adgimnsuvx+\- ]+)( ?(结果)?(大于|小于|大于等于|小于等于|>=|>|<|<=) ?(-?\d{1,10}))?"
 )
 
 RE_ROLL_CMD = re.compile(RE_ROLL_STR)
@@ -25,6 +26,8 @@ RE_ROLL_CMD = re.compile(RE_ROLL_STR)
 async def roll_command_handler(bot: Bot, event: Event, state: dict):
     messages = []
 
+    logger.info(f"[7sRoll] received roll command: {event.raw_message}")
+
     if await GROUP(bot, event):
         messages.append(f"[CQ:at,qq={event.user_id}]")
 
@@ -32,7 +35,7 @@ async def roll_command_handler(bot: Bot, event: Event, state: dict):
     if "_match" in state:
         match = state["_matched"]
     else:
-        args = str(event.message).strip()
+        args = str(event.raw_message).strip()
         match = RE_ROLL_CMD.match(args)
         if not match:
             messages.append("roll 命令格式错误")
