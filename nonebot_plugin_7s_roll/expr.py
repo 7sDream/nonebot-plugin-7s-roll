@@ -1,24 +1,24 @@
-import enum
 import abc
 import math
 import random
 import re
+from typing import Dict, List, Optional, Tuple
 
 
 class Op(abc.ABC):
     @abc.abstractmethod
-    def __call__(self, left: (int, str), right: (int, str)) -> (int, str):
+    def __call__(self, left: Tuple[int, str], right: Tuple[int, str]) -> Tuple[int, str]:
         pass
 
 
 class __Add(Op):
-    def __call__(self, left: (int, str), right: (int, str)) -> (int, str):
+    def __call__(self, left: Tuple[int, str], right: Tuple[int, str]) -> Tuple[int, str]:
         val = left[0] + right[0]
         return val, f"{left[1]} + {right[1]}"
 
 
 class __Minus(Op):
-    def __call__(self, left: (int, str), right: (int, str)) -> (int, str):
+    def __call__(self, left: Tuple[int, str], right: Tuple[int, str]) -> Tuple[int, str]:
         val = left[0] - right[0]
         return val, f"{left[1]} - {right[1]}"
 
@@ -38,7 +38,7 @@ class PostProcessor(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def __call__(self, values: [int]) -> (int, str):
+    def __call__(self, values: List[int]) -> Tuple[int, str]:
         pass
 
 
@@ -47,7 +47,7 @@ class __MaxPostProcessor(PostProcessor):
     def prefix(self):
         return "最大值为"
 
-    def __call__(self, values: [int]) -> (int, str):
+    def __call__(self, values: List[int]) -> Tuple[int, str]:
         val = max(values)
         if len(values) == 1:
             s = str(val)
@@ -61,7 +61,7 @@ class __MinPostProcessor(PostProcessor):
     def prefix(self):
         return "最小值为"
 
-    def __call__(self, values: [int]) -> (int, str):
+    def __call__(self, values: List[int]) -> Tuple[int, str]:
         val = min(values)
         if len(values) == 1:
             s = str(val)
@@ -75,7 +75,7 @@ class __AvgPostProcessor(PostProcessor):
     def prefix(self):
         return "平均值为"
 
-    def __call__(self, values: [int]) -> (int, str):
+    def __call__(self, values: List[int]) -> Tuple[int, str]:
         val = math.floor(sum(values) / len(values))
         if len(values) == 1:
             s = str(val)
@@ -89,7 +89,7 @@ class __SumPostProcessor(PostProcessor):
     def prefix(self):
         return "总和为"
 
-    def __call__(self, values: [int]) -> (int, str):
+    def __call__(self, values: List[int]) -> Tuple[int, str]:
         val = sum(values)
         if len(values) == 1:
             s = str(val)
@@ -103,7 +103,7 @@ MIN = __MinPostProcessor()
 AVG = __AvgPostProcessor()
 SUM = __SumPostProcessor()
 
-POST_PROCESS_MAP = {
+POST_PROCESS_MAP: Dict[str, PostProcessor] = {
     "max": MAX,
     "min": MIN,
     "avg": AVG,
@@ -113,7 +113,7 @@ POST_PROCESS_MAP = {
 
 class Expr(abc.ABC):
     @abc.abstractmethod
-    def __call__(self) -> (int, str):
+    def __call__(self) -> Tuple[int, str]:
         pass
 
 
@@ -123,7 +123,7 @@ class OpExpr(Expr):
         self.op = op
         self.right = right
 
-    def __call__(self) -> (int, str):
+    def __call__(self) -> Tuple[int, str]:
         return self.op(self.left(), self.right())
 
 
@@ -136,12 +136,14 @@ class Num(Expr):
 
 
 class Roll(Expr):
-    def __init__(self, times: int, faces: int, postprocessor: PostProcessor = None):
+    post_processor: PostProcessor
+
+    def __init__(self, times: int, faces: int, postprocessor: Optional[PostProcessor] = None):
         self.times = times
         self.faces = faces
-        self.post_processor = postprocessor
-        if self.post_processor is None:
-            self.post_processor = SUM
+        self.post_processor = SUM
+        if postprocessor is not None:
+            self.post_processor = postprocessor
         self.values = []
 
     def __call__(self):
@@ -154,7 +156,7 @@ RE_OP = re.compile(r"[+\-]")
 RE_NUM = re.compile(r"\d+")
 
 
-def tokenize(s: str):
+def tokenize(s: str) -> Optional[List[Expr]]:
     s = s.replace(" ", "")
     tokens = []
     pos = 0
@@ -170,7 +172,7 @@ def tokenize(s: str):
                 return None
             if faces == 0 or faces > 1000:
                 return None
-            if post:
+            if isinstance(post, str):
                 post = POST_PROCESS_MAP[post]
             tokens.append(Roll(times, faces, post))
             roll_count += 1
@@ -191,7 +193,7 @@ def tokenize(s: str):
     return tokens
 
 
-def parse(tokens: list) -> Expr:
+def parse(tokens: Optional[List[Expr]]) -> Optional[Expr]:
     if tokens is None:
         return None
     while True:
@@ -221,5 +223,5 @@ def parse(tokens: list) -> Expr:
     return ast
 
 
-def compile(s):
+def compile(s) -> Optional[Expr]:
     return parse(tokenize(s))

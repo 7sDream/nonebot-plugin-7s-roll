@@ -1,8 +1,15 @@
 from .command import cmd_roll, message_cmd_roll
-from .roll import roll as _roll
+from .config import Config
+from .roll import roll
 
-__version__ = "0.1.2"
+__version__ = "0.2.0a1"
 
-from nonebot import export
+from nonebot.plugin import PluginMetadata
 
-export().roll = _roll
+__plugin_meta__ = PluginMetadata(
+    name = "7sRoll",
+    description="roll 点工具",
+    usage="/roll 3d10",
+    config = Config,
+    extra={},
+)

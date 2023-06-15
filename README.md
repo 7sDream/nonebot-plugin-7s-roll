@@ -5,18 +5,8 @@
 ## 使用
 
 ```python
-import nonebot
-from nonebot.adapters.cqhttp import Bot as CQHTTPBot
-
-nonebot.init(_env_file=".env")
-driver = nonebot.get_driver()
-driver.register_adapter("cqhttp", CQHTTPBot)
-nonebot.load_builtin_plugins()
-
-# load other plugins
-
+# load your driver, set adapter, builtin plugin etc.
 nonebot.load_plugin("nonebot_plugin_7s_roll")
-
 nonebot.run()
 ```
 

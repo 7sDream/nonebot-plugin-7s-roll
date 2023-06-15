@@ -1,13 +1,15 @@
 import re
+from typing import Annotated
 
-from nonebot import on_message, on_command
-from nonebot.adapters import Bot, Event
+from nonebot import on_command, on_message
+from nonebot.adapters import Event
+from nonebot.consts import REGEX_MATCHED
 from nonebot.log import logger
-from nonebot.adapters.cqhttp.permission import GROUP
-from nonebot.adapters.cqhttp.message import Message
+from nonebot.params import EventPlainText
 from nonebot.rule import regex
+from nonebot.typing import T_State
 
-from .common import START, SEP, CONF
+from .common import CONF, START
 from .roll import roll
 
 RE_ROLL_STR = (
@@ -23,19 +25,19 @@ RE_ROLL_STR = (
 RE_ROLL_CMD = re.compile(RE_ROLL_STR)
 
 
-async def roll_command_handler(bot: Bot, event: Event, state: dict):
+async def roll_command_handler(event: Event, msg: Annotated[str, EventPlainText()], state: T_State):
     messages = []
 
-    logger.info(f"[7sRoll] received roll command: {event.raw_message}")
+    logger.info(f"[7sRoll] received roll command: {msg}")
 
-    if await GROUP(bot, event):
-        messages.append(f"[CQ:at,qq={event.user_id}]")
+    if event.get_event_name().startswith("message.group"): # onebot v11
+        messages.append(f"[CQ:at,qq={event.user_id}]") # type: ignore
 
     match = None
-    if "_match" in state:
-        match = state["_matched"]
+    if REGEX_MATCHED in state:
+        match = state[REGEX_MATCHED]
     else:
-        args = str(event.raw_message).strip()
+        args = msg.strip()
         match = RE_ROLL_CMD.match(args)
         if not match:
             messages.append("roll 命令格式错误")
@@ -43,7 +45,7 @@ async def roll_command_handler(bot: Bot, event: Event, state: dict):
             messages.append("表达式举例：3d6+1d3-1")
             messages.append("判断方式可选：>, <, <=, >=, 或对应中文")
             messages.append("目标：需要达成的点数")
-            return await cmd_roll.finish(Message("\n".join(messages)))
+            return await cmd_roll.finish("\n".join(messages))
         if match.group(1) is None:
             return
 
@@ -51,7 +53,7 @@ async def roll_command_handler(bot: Bot, event: Event, state: dict):
 
     messages.extend(roll(expr_str, op_str, target))
 
-    return await cmd_roll.finish(Message("\n".join(messages)))
+    return await cmd_roll.finish("\n".join(messages))
 
 
 cmd_roll = on_command(CONF.i7s_roll_command, priority=1, block=True)
