@@ -1,7 +1,7 @@
-import re
 import operator
+from typing import List, Optional
 
-from .expr import compile, Roll
+from .expr import Roll, compile
 
 OP_MAP = {
     ">": operator.gt,
@@ -15,7 +15,7 @@ OP_MAP = {
 }
 
 
-def roll(expr_str: str, op_str: str = None, target_str: str = None) -> [str]:
+def roll(expr_str: str, op_str: Optional[str] = None, target_str: Optional[str] = None) -> List[str]:
     messages = []
 
     try:
@@ -28,9 +28,10 @@ def roll(expr_str: str, op_str: str = None, target_str: str = None) -> [str]:
         messages.append("表达式举例：3d6+1d3-1")
         return messages
 
-    op = None
+    op = target = None
     if op_str:
         op = OP_MAP[op_str]
+        assert(target_str is not None)
         target = int(target_str)
 
     message = [f"{expr_str.strip()} 投掷结果"]
@@ -48,7 +49,7 @@ def roll(expr_str: str, op_str: str = None, target_str: str = None) -> [str]:
 
         for i, dice in enumerate(dices):
             message = [f"第 {i+1} 颗：{dice}"]
-            if op:
+            if op and target:
                 if op(dice, target):
                     message.append("，通过")
                 else:
@@ -59,7 +60,7 @@ def roll(expr_str: str, op_str: str = None, target_str: str = None) -> [str]:
             prefix = roll.post_processor.prefix
             messages.append("")
             message = [f"{prefix} {result}"]
-            if op:
+            if op and target:
                 if op(result, target):
                     message.append("，通过")
                 else:
@@ -67,7 +68,7 @@ def roll(expr_str: str, op_str: str = None, target_str: str = None) -> [str]:
             messages.append("".join(message))
     else:
         message = [display, " = ", str(result)]
-        if op:
+        if op and target:
             if op(result, target):
                 message.append("，通过")
             else:

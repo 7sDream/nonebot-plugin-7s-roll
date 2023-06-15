@@ -1,6 +1,7 @@
 import re
 from typing import Annotated
 
+import nonebot.adapters.onebot.v11 as onebot11
 from nonebot import on_command, on_message
 from nonebot.adapters import Event
 from nonebot.consts import REGEX_MATCHED
@@ -24,14 +25,14 @@ RE_ROLL_STR = (
 
 RE_ROLL_CMD = re.compile(RE_ROLL_STR)
 
-
 async def roll_command_handler(event: Event, msg: Annotated[str, EventPlainText()], state: T_State):
-    messages = []
+    messages = onebot11.Message() 
 
     logger.info(f"[7sRoll] received roll command: {msg}")
 
-    if event.get_event_name().startswith("message.group"): # onebot v11
-        messages.append(f"[CQ:at,qq={event.user_id}]") # type: ignore
+    if isinstance(event, onebot11.GroupMessageEvent):
+        messages.append(onebot11.MessageSegment.at(event.user_id))
+        messages.append('\n')
 
     match = None
     if REGEX_MATCHED in state:
@@ -40,20 +41,19 @@ async def roll_command_handler(event: Event, msg: Annotated[str, EventPlainText(
         args = msg.strip()
         match = RE_ROLL_CMD.match(args)
         if not match:
-            messages.append("roll 命令格式错误")
-            messages.append("格式为：roll <表达式>[ <判断方式><目标>]")
-            messages.append("表达式举例：3d6+1d3-1")
-            messages.append("判断方式可选：>, <, <=, >=, 或对应中文")
+            messages.append("roll 命令格式错误\n")
+            messages.append("格式为：roll <表达式>[ <判断方式><目标>]\n")
+            messages.append("表达式举例：3d6+1d3-1\n")
+            messages.append("判断方式可选：>, <, <=, >=, 或对应中文\n")
             messages.append("目标：需要达成的点数")
-            return await cmd_roll.finish("\n".join(messages))
-        if match.group(1) is None:
+        elif match.group(1) is None:
             return
 
-    expr_str, op_str, target = match.group(2, 5, 6)
+    if match:
+        expr_str, op_str, target = match.group(2, 5, 6)
+        messages.append('\n'.join(roll(expr_str, op_str, target)))
 
-    messages.extend(roll(expr_str, op_str, target))
-
-    return await cmd_roll.finish("\n".join(messages))
+    return await cmd_roll.finish(messages)
 
 
 cmd_roll = on_command(CONF.i7s_roll_command, priority=1, block=True)
