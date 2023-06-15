@@ -2,7 +2,7 @@ from .command import cmd_roll, message_cmd_roll
 from .config import Config
 from .roll import roll
 
-__version__ = "0.2.0a1"
+__version__ = "0.2.0a2"
 
 from nonebot.plugin import PluginMetadata
 
