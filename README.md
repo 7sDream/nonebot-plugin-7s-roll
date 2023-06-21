@@ -2,6 +2,10 @@
 
 扔骰子小工具。
 
+0.2.0 版本支持 NoneBot2 2.0 正式版 API，不依赖任何特定 Adapter。
+
+在 OneBot V11 下回复时支持 At。
+
 ## 使用
 
 ```python
